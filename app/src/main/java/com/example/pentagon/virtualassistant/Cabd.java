@@ -178,7 +178,7 @@ actor=jsn.get(i);
     public ArrayList<DataEvent> getVoucherSync(){
         SQLiteDatabase dd=this.getReadableDatabase();
 
-        String dde="select voucher.id,voucher.amount,voucher.naration,voucher.trans_date,voucher.vourcher_type,voucher.created_by,voucher.created_date,voucher.approved_by,voucher.approved_date,voucher.del_by,voucher.is_post,voucher.del_date,voucher.published,voucher.voucher_no,vouchertrans.acc_ledgers_id,vouchertrans.acc_ledgers_name,vouchertrans.voucher_id from vouchertrans,voucher WHERE vouchertrans.voucher_id=voucher.voucher_no AND vouchertrans.sync=0";
+        String dde="select * from tblevent";
         Cursor cursor=dd.rawQuery(dde,null );
 
 
