@@ -1,5 +1,8 @@
 package com.example.pentagon.virtualassistant.fragment;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,11 +17,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.pentagon.virtualassistant.AddEventActivity;
+import com.example.pentagon.virtualassistant.LoginActivity;
 import com.example.pentagon.virtualassistant.R;
+import com.example.pentagon.virtualassistant.Rectrofit.ResponseCallback;
+import com.example.pentagon.virtualassistant.Rectrofit.ResponseHandler;
+import com.example.pentagon.virtualassistant.Rectrofit.Retrofit_Helper;
+import com.example.pentagon.virtualassistant.SharedPreferenceClass;
+import com.example.pentagon.virtualassistant.SignupActivity;
+import com.example.pentagon.virtualassistant.Utility;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -26,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +59,7 @@ public class TicketInfo extends Fragment {
 
     int profile=0;
     Button btnpost;
-
+EditText from,to,desc,date;
 Spinner type;
 
     private static String userid="";
@@ -67,19 +80,152 @@ Spinner type;
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =inflater.inflate(R.layout.fragment_ticket, container, false);
-
+Utility.fab.setVisibility(View.GONE);
 //if(getActivity().getSupportFragmentManager().getBackStackEntryAt(0).getName()!=null)
 //Log.i("ddd",getActivity().getSupportFragmentManager().getBackStackEntryAt(0).getName());
         //initilize();
         type=(Spinner)view.findViewById(R.id.spinner);
-        String[] type1={"Bus","Train","story","Plane"};
+        desc=(EditText)view.findViewById(R.id.editText4) ;
+        from=(EditText)view.findViewById(R.id.from);
+        to=(EditText)view.findViewById(R.id.to);
+        date=(EditText)view.findViewById(R.id.editText3);
+        btnpost=(Button)view.findViewById(R.id.button) ;
+        btnpost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean flag=true;
+               if(from.getText().toString().isEmpty()){
+                   from.setError("Enter From location");
+                   flag=false;
+               }
+                if(to.getText().toString().isEmpty()){
+                    to.setError("Enter To location");
+                    flag=false;
+                }
+                if(desc.getText().toString().isEmpty()){
+                    to.setError("Enter description");
+                    flag=false;
+                }
+if(flag)
+                sendrequest();
+            }
+        });
+        String[] type1={"Bus","Train","Plane"};
         type.setAdapter(
                 new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,type1));
 
         Log.i("ddd","222");
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hour=c.get(Calendar.HOUR_OF_DAY);
+        int minute=c.get(Calendar.MINUTE);
+        date.setText(day + "-" + (month + 1) + "-" + year);
 
+
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dd = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        date.setText(day + "-" + (month + 1) + "-" + year);
+
+                    }
+                }, year, month, day);
+
+//        DialogFragment newFragment = new SaleOrdersFragment.DatePickerFragment();
+//
+//        newFragment.show(getFragmentManager(),"timePicker");
+                // tempdate=dateto;
+                dd.show();
+
+            }
+        });
 
         return view;
+    }
+
+    private void sendrequest() {
+
+        Map<String, String> params = new HashMap<>();
+        //jObj = new JSONObject();
+        // params.put("uid", uid);
+        params.put("uid", Utility.USERID);
+        params.put("ticket_type", type.getSelectedItem().toString());
+        params.put("from_to", from.getText().toString()+"-"+to.getText().toString());
+        params.put("travel_date", date.getText().toString());
+        params.put("details", desc.getText().toString());
+        // uid
+        //ticket_type
+        //from_to
+        //travel_date
+        //details
+
+        Call<JsonObject> jsonObjectCall = new Retrofit_Helper().getRetrofitBuilder().getfromServer("ticketbooking.php", params);
+        jsonObjectCall.clone().enqueue(new ResponseHandler(getActivity(), new ResponseCallback() {
+            @Override
+            public void getResponse(int code, JsonObject jsonObject) {
+
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(jsonObject.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                //{"ticket":2}
+
+                if (jsonObj != null) {
+                    Log.d("getfromserver", "b4 extract");
+                    JSONObject actor = null;
+                    try {
+                        if (jsonObj.has("ticket")) {
+//                        //    Log.i("new_loginid_456", "" + actor.getInt("USER_ID"));
+
+                            //	actor = login_array.getJSONObject(0);
+                            if (Integer.parseInt(jsonObj.getString("ticket"))>0) {
+
+                                Toast.makeText(getActivity(), "Booking Success", Toast.LENGTH_SHORT).show();
+
+                          from.setText("");
+                          to.setText("");
+                          desc.setText("");
+                            }
+                            else
+
+                                Toast.makeText(getActivity(), "something went wrong..", Toast.LENGTH_SHORT).show();
+                        }
+                        } catch(Exception eee){
+                            eee.printStackTrace();
+                        }
+
+                    }
+            }
+
+            @Override
+            public void getFailure(Call<JsonObject> call, int code) {
+                if (code == 1) {
+
+                    Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getActivity(), "Can't Connect with server", Toast.LENGTH_SHORT).show();
+
+                }
+                ResponseHandler.progressDialog.dismiss();
+
+            }
+
+
+        }, jsonObjectCall,1));
     }
 
 
