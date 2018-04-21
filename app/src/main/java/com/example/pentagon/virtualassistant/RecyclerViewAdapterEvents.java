@@ -97,7 +97,7 @@ delete=(Button)view.findViewById(R.id.delete);
        Log.e("datew",str);
        String value="";
 if(!product.getValue().equals(""))
-    value=time+"Repeat on:"+product.getValue();
+    value=time+" Repeat on:"+product.getValue();
 //        if(DateUtils.isToday(start.getTime())){
 //            holder.date.setText("Today "+value);
 //
