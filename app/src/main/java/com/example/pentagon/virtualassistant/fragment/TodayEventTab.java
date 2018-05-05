@@ -230,7 +230,7 @@ flag=1;
             Date dd=convertStringToDate(de.getDate());
             Calendar c = Calendar.getInstance();
             //Setting the date to the given date
-            c.setTime(dd);
+            //c.setTime(dd);
             Calendar kk = Calendar.getInstance();
 
 

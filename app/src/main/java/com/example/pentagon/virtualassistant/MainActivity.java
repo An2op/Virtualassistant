@@ -93,12 +93,12 @@ finish();
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 //            // action with ID action_refresh was selected
-            case R.id.action_settings:
-
-            Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
-            startActivity(dbmanager);
-
-                break;
+//            case R.id.action_settings:
+//
+//            Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
+//            startActivity(dbmanager);
+//
+//                break;
             case R.id.logout:
 
 new Cabd(MainActivity.this).deleteAll();

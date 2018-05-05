@@ -316,13 +316,43 @@ dd.setMinutes(cal.get(Calendar.MINUTE)+5);
                setAlarmMonthly(myList,de,cc,0);
 
            }
-           else{
+           else if(de.getType().equals("Yearly")){
 
-               setAlarmOnce(de,cc);
+               setAlarmyearly(de,cc);
            }
+           else
+               setAlarmOnce(de,cc);
        }
     }
+    public static void setAlarmyearly(DataEvent de, Context cc) {
+        Date dd=convertStringToDate(de.getDate());
+        Calendar c = Calendar.getInstance();
+        //Setting the date to the given date
+        c.setTime(dd);
 
+        Calendar kk=Calendar.getInstance();
+        if(!kk.getTime().before(c.getTime())) {
+
+            c.set(Calendar.YEAR,kk.get(Calendar.YEAR));
+        }
+            AlarmManager alarmMgr = (AlarmManager) cc.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(cc, MyReceiver.class);
+            intent.putExtra("id",de.getId());
+            intent.putExtra("type",de.getType());
+            intent.putExtra("Event",de.getDesc());
+
+            Log.e("date",c.getTimeInMillis()+"");
+            intent.putExtra("datetime", c.getTime().toString());
+            Log.e("date", c.getTimeInMillis() + "");
+            int pen= new Cabd(cc).insertTemp(String.valueOf(de.getId()),String.valueOf(c.getTimeInMillis()));
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(cc, pen, intent, 0);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(), pendingIntent);
+            // alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,timeInMilliseconds,86400000*30, pendingIntent);
+            //alarmMgr.setInexactRepeating();
+
+
+    }
     public static void setAlarmOnce(DataEvent de, Context cc) {
         Date dd=convertStringToDate(de.getDate());
         Calendar c = Calendar.getInstance();
@@ -347,6 +377,7 @@ dd.setMinutes(cal.get(Calendar.MINUTE)+5);
             // alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,timeInMilliseconds,86400000*30, pendingIntent);
             //alarmMgr.setInexactRepeating();
         }
+
 
     }
 
@@ -384,6 +415,12 @@ dd.setMinutes(cal.get(Calendar.MINUTE)+5);
             }
             Log.e("no.ofdays",nodays+"");
             Calendar kk=Calendar.getInstance();
+            if(c.before(kk)){
+
+                kk.set(Calendar.HOUR_OF_DAY,c.get(Calendar.HOUR_OF_DAY));
+                kk.set(Calendar.MINUTE,c.get(Calendar.MINUTE));
+                c=kk;
+            }
             if(from==0)
             c.add(Calendar.MONTH, nodays);
             else
@@ -437,6 +474,7 @@ dd.setMinutes(cal.get(Calendar.MINUTE)+5);
 
             Date dd=convertStringToDate(de.getDate());
             Calendar c = Calendar.getInstance();
+
             //Setting the date to the given date
             c.setTime(dd);
             new SimpleDateFormat("EE", Locale.ENGLISH).format(c.getTime());
@@ -469,6 +507,13 @@ else if(n1>n2){
 }
 Log.e("no.ofdays",nodays+"");
             Calendar kk=Calendar.getInstance();
+            if(c.before(kk)){
+
+kk.set(Calendar.HOUR_OF_DAY,c.get(Calendar.HOUR_OF_DAY));
+kk.set(Calendar.MINUTE,c.get(Calendar.MINUTE));
+c=kk;
+            }
+
             if(from==1)
                 c.add(Calendar.DAY_OF_MONTH, 7);
                 else
@@ -484,7 +529,7 @@ Log.e("no.ofdays",nodays+"");
             long timeInMilliseconds = mDate.getTime();
                 System.out.println("Date in milli :: " + timeInMilliseconds);
 
-                Log.e("eee", mDate.toString()+" "+c.getTimeInMillis()+" ");
+                Log.e("eee1", mDate.toString()+" "+c.getTimeInMillis()+" ");
 
             SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
             String newDate = sdf.format(c.getTime());
