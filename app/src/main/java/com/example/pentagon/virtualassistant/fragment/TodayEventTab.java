@@ -1,7 +1,9 @@
 package com.example.pentagon.virtualassistant.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import android.widget.VideoView;
 import com.example.pentagon.virtualassistant.AddEventActivity;
 import com.example.pentagon.virtualassistant.Cabd;
 import com.example.pentagon.virtualassistant.DataEvent;
+import com.example.pentagon.virtualassistant.MainActivity;
 import com.example.pentagon.virtualassistant.R;
 import com.example.pentagon.virtualassistant.RecyclerViewAdapterEvents;
 import com.example.pentagon.virtualassistant.Utility;
@@ -77,6 +80,16 @@ recyclerView=(RecyclerView)view.findViewById(R.id.recyclerView);
 //
 //       // getServiceList();
         Utility.fab.setVisibility(View.VISIBLE);
+        Utility.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(getContext(),AddEventActivity.class);
+                startActivity(i);
+                getActivity().finish();
+
+            }
+        });
+        Utility.fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_event_note_black_24dp));
         dataEvents=new ArrayList<>();
         sp=(Spinner)view.findViewById(R.id.spinner2);
         String []aa={"Today","Daily","Monthly","One Time","Yearly"};

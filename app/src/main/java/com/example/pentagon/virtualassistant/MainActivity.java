@@ -2,6 +2,8 @@ package com.example.pentagon.virtualassistant;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,15 +11,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.pentagon.virtualassistant.fragment.FeedbackFragment;
 import com.example.pentagon.virtualassistant.fragment.TodayEventTab;
 import com.example.pentagon.virtualassistant.fragment.RequestFragment;
 import com.example.pentagon.virtualassistant.fragment.TicketInfo;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new RequestFragment();
                     loadFragment(fragment);
                     return true;
+                case R.id.feedback:
+                    toolbar.setTitle("Feedback");
+                    fragment = new FeedbackFragment();
+                    loadFragment(fragment);
+                    return true;
             }
             return false;
         }
@@ -73,15 +84,8 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(new TodayEventTab());
         Utility.fab = findViewById(R.id.fab);
 Utility.fab.setVisibility(View.VISIBLE);
-        Utility.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-Intent i=new Intent(MainActivity.this,AddEventActivity.class);
-startActivity(i);
-finish();
 
-            }
-        });
+        temp();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -112,6 +116,20 @@ new Cabd(MainActivity.this).deleteAll();
 
 
                 finish();
+
+
+                break;
+            case R.id.allapps:
+
+
+                Intent i = new Intent(MainActivity.this, AppViewActivity.class);
+                i.putExtra("type", "edit");
+
+                startActivity(i);
+
+
+                finish();
+
                 break;
        }
 
@@ -132,7 +150,18 @@ new Cabd(MainActivity.this).deleteAll();
 
 
     }
+public void temp(){
 
+    final PackageManager pm = getPackageManager();
+//get a list of installed apps.
+    List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+    for (ApplicationInfo packageInfo : packages) {
+        Log.d("ddddd", "Installed package :" + packageInfo.packageName);
+        Log.d("ddddd", "Source dir : " + packageInfo.sourceDir);
+        Log.d("ddddd", "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+    }
+}
     @Override
     public void onBackPressed() {
         super.onBackPressed();

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pentagon.virtualassistant">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_CALENDAR"/>
-    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,8 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddEventActivity"
-            android:windowSoftInputMode="adjustNothing"/>
+        <activity
+            android:name=".AddEventActivity"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Main2Activity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
@@ -32,7 +35,9 @@
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity android:name=".AppViewActivity"></activity>
     </application>
 
 </manifest>
